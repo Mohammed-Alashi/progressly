@@ -25,7 +25,7 @@ export async function GET(request: Request) {
       .select({ id: users.id, email: users.email })
       .from(users)
       .innerJoin(achievements, eq(achievements.userId, users.id))
-      .where(and(eq(achievements.status, "confirmed"), gte(achievements.achievedAt, since)))
+      .where(and(eq(achievements.status, "confirmed"), gte(achievements.createdAt, since)))
       .groupBy(users.id, users.email);
 
     for (const user of activeUsers) {
@@ -42,7 +42,7 @@ export async function GET(request: Request) {
         const weeklyAchievements = await db
           .select({ title: achievements.title, details: achievements.details, project: achievements.project })
           .from(achievements)
-          .where(and(eq(achievements.userId, user.id), eq(achievements.status, "confirmed"), gte(achievements.achievedAt, since)));
+          .where(and(eq(achievements.userId, user.id), eq(achievements.status, "confirmed"), gte(achievements.createdAt, since)));
         const content = await writeLinkedInPost(weeklyAchievements, "weekly");
 
         await db.insert(posts).values({
