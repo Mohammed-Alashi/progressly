@@ -597,6 +597,17 @@ button {
   font-weight: 750;
 }
 
+.settings-email-button {
+  flex: 0 0 auto;
+  padding: 10px 13px;
+  font-size: 12px;
+}
+
+.setting-line .test-email-message {
+  color: var(--primary);
+  font-weight: 700;
+}
+
 .modal-backdrop {
   position: fixed;
   z-index: 50;

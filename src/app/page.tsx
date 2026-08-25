@@ -88,6 +88,8 @@ const [revisionRequest, setRevisionRequest] = useState("");
 const [savingDraft, setSavingDraft] = useState(false);
   const [postError, setPostError] = useState("");
   const [showSignInModal, setShowSignInModal] = useState(false);
+  const [sendingTestEmail, setSendingTestEmail] = useState(false);
+  const [testEmailMessage, setTestEmailMessage] = useState("");
   const hasHandledPendingImport = useRef(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAchievement, setEditingAchievement] =
@@ -238,6 +240,30 @@ const [savingDraft, setSavingDraft] = useState(false);
       if (result?.error) clearPendingGuestImport();
     } catch {
       clearPendingGuestImport();
+    }
+  }
+
+  async function sendTestEmail() {
+    if (!isSignedIn || sendingTestEmail) return;
+
+    setSendingTestEmail(true);
+    setTestEmailMessage("");
+
+    try {
+      const response = await fetch("/api/email/test", { method: "POST" });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error ?? "Could not send the test email.");
+      }
+
+      setTestEmailMessage("Test email sent. Check your inbox.");
+    } catch (error) {
+      setTestEmailMessage(
+        error instanceof Error ? error.message : "Could not send the test email."
+      );
+    } finally {
+      setSendingTestEmail(false);
     }
   }
 
@@ -946,6 +972,27 @@ function closePreview() {
               </div>
               <span>Not connected</span>
             </div>
+
+            {isSignedIn && (
+              <div className="setting-line">
+                <div>
+                  <b>Weekly email reminders</b>
+                  <p>Get an email when your weekly LinkedIn draft is ready.</p>
+                  {testEmailMessage && (
+                    <p className="test-email-message" role="status">
+                      {testEmailMessage}
+                    </p>
+                  )}
+                </div>
+                <button
+                  className="secondary-button settings-email-button"
+                  disabled={sendingTestEmail}
+                  onClick={() => void sendTestEmail()}
+                >
+                  {sendingTestEmail ? "Sending..." : "Send test email"}
+                </button>
+              </div>
+            )}
 
             <div className="setting-line">
               <div>
