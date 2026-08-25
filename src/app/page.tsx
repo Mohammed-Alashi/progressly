@@ -103,7 +103,7 @@ const [savingDraft, setSavingDraft] = useState(false);
     title: "",
     details: "",
     category: "project",
-    project: "",
+    project: "General",
     evidenceUrl: "",
     isPublic: false,
   });
@@ -273,7 +273,7 @@ const [savingDraft, setSavingDraft] = useState(false);
     title: "",
     details: "",
     category: "project",
-    project: "",
+    project: "General",
     evidenceUrl: "",
     isPublic: false,
   });
@@ -362,7 +362,7 @@ async function confirmDelete() {
         title: "",
         details: "",
         category: "project",
-        project: "",
+        project: "General",
         evidenceUrl: "",
         isPublic: false,
       });
@@ -994,13 +994,6 @@ function closePreview() {
               </div>
             )}
 
-            <div className="setting-line">
-              <div>
-                <b>Weekly reminder</b>
-                <p>Sunday email reminders will be added after AI posts.</p>
-              </div>
-              <span>Planned</span>
-            </div>
           </section>
         )}
       </section>
@@ -1015,7 +1008,7 @@ function closePreview() {
               <div>
                 <p className="section-label">NEW ACHIEVEMENT</p>
 <h2>
-  {editingAchievement ? "Edit achievement" : "What did you complete?"}
+  {editingAchievement ? "Edit achievement" : "What did you accomplish today?"}
 </h2>              </div>
 
               <button
@@ -1035,18 +1028,18 @@ function closePreview() {
                   onChange={(event) =>
                     setForm({ ...form, title: event.target.value })
                   }
-                  placeholder="Fixed the category matching bug"
+                  placeholder="Completed a project milestone"
                 />
               </label>
 
               <label>
-                What was the result or what did you learn?
+                Describe the project, task, problem you solved, or skill you learned.
                 <textarea
                   value={form.details}
                   onChange={(event) =>
                     setForm({ ...form, details: event.target.value })
                   }
-                  placeholder="Exact matching now returns the correct category ID."
+                  placeholder="Explain what you did, the outcome, or what you learned."
                 />
               </label>
 
@@ -1074,7 +1067,7 @@ function closePreview() {
                     onChange={(event) =>
                       setForm({ ...form, project: event.target.value })
                     }
-                    placeholder="Android Kiosk"
+                    placeholder="General"
                   />
                 </label>
               </div>
