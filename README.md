@@ -29,46 +29,6 @@ It turns that evidence into LinkedIn-ready drafts while keeping the user in cont
 - Groq API
 - Vercel deployment
 
-## Run Locally
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/Mohammed-Alashi/progressly.git
-cd progressly
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-3. Create a `.env.local` file and add:
-
-```env
-DATABASE_URL=
-GROQ_API_KEY=
-AUTH_GOOGLE_ID=
-AUTH_GOOGLE_SECRET=
-AUTH_SECRET=
-```
-
-4. Generate and apply database migrations:
-
-```bash
-npm run db:generate
-npm run db:migrate
-```
-
-5. Run the development server:
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
-
 ## Security
 
 Never commit `.env.local` or API keys. Environment variables are excluded through `.gitignore`.
