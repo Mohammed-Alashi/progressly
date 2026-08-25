@@ -1,15 +1,79 @@
-# CareerFlow AI
+# Progressly
 
-Personal AI career assistant. It keeps normal project conversations, extracts confirmed achievements, writes a weekly LinkedIn post, and is designed to publish through LinkedIn's official API.
+An evidence-based career progress tracker that helps users record real achievements, review their growth, and create accurate LinkedIn post drafts with AI.
 
-## Start locally
+## Why Progressly?
 
-1. Copy `.env.example` to `.env.local` and add a free Groq API key.
-2. Run `npm install`.
-3. Run `npm run dev`.
+Most AI tools can write a post from an idea. Progressly starts with real work: completed achievements, skills learned, and problems solved.
 
-The first UI works without a database. Set `DATABASE_URL` before enabling persistent chat history, achievements, and scheduled publishing.
+It turns that evidence into LinkedIn-ready drafts while keeping the user in control before anything is saved or published.
 
-## Important safety rule
+## Features
 
-The weekly job must only publish achievements marked `confirmed`. Never store API keys in source code or commit `.env.local`.
+- Google sign-in for personal, private accounts
+- Add, edit, and delete achievements
+- Track achievements across today, this week, and this month
+- AI-powered LinkedIn draft generation using Groq
+- One-off, weekly, and monthly post drafts
+- Review modal: edit the draft, request a rewrite, approve, or discard it
+- Neon PostgreSQL database with Drizzle ORM
+- Responsive interface with light and dark mode
+
+## Tech Stack
+
+- Next.js
+- React and TypeScript
+- Neon PostgreSQL
+- Drizzle ORM
+- NextAuth with Google OAuth
+- Groq API
+- Vercel deployment
+
+## Run Locally
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/Mohammed-Alashi/progressly.git
+cd progressly
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Create a `.env.local` file and add:
+
+```env
+DATABASE_URL=
+GROQ_API_KEY=
+AUTH_GOOGLE_ID=
+AUTH_GOOGLE_SECRET=
+AUTH_SECRET=
+```
+
+4. Generate and apply database migrations:
+
+```bash
+npm run db:generate
+npm run db:migrate
+```
+
+5. Run the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+## Security
+
+Never commit `.env.local` or API keys. Environment variables are excluded through `.gitignore`.
+
+## Author
+
+Mohammed Alashi  
+Computer Engineering Student at Istanbul Technical University
