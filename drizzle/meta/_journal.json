@@ -15,6 +15,13 @@
       "when": 1787574947594,
       "tag": "0001_spotty_squirrel_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1787729669146,
+      "tag": "0002_brainy_mandroid",
+      "breakpoints": true
     }
   ]
 }
