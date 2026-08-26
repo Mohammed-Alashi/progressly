@@ -295,6 +295,20 @@ function Dashboard() {
     return Math.min(100, Math.round((stats.week / target) * 100));
   }, [stats.week]);
 
+  // Filtered vault items
+  const filteredAchievements = useMemo(() => {
+    return achievements.filter((item) => {
+      const matchesCategory =
+        vaultCategory === "all" || item.category === vaultCategory;
+      const matchesSearch =
+        vaultSearch.trim() === "" ||
+        item.title.toLowerCase().includes(vaultSearch.toLowerCase()) ||
+        item.details.toLowerCase().includes(vaultSearch.toLowerCase()) ||
+        item.project.toLowerCase().includes(vaultSearch.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [achievements, vaultCategory, vaultSearch]);
+
   if (status === "loading") {
     return <main className="auth-screen-loading">Initializing Progressly Workspace...</main>;
   }
@@ -693,20 +707,6 @@ function Dashboard() {
       setSavingProfile(false);
     }
   }
-
-  // Filtered vault items
-  const filteredAchievements = useMemo(() => {
-    return achievements.filter((item) => {
-      const matchesCategory =
-        vaultCategory === "all" || item.category === vaultCategory;
-      const matchesSearch =
-        vaultSearch.trim() === "" ||
-        item.title.toLowerCase().includes(vaultSearch.toLowerCase()) ||
-        item.details.toLowerCase().includes(vaultSearch.toLowerCase()) ||
-        item.project.toLowerCase().includes(vaultSearch.toLowerCase());
-      return matchesCategory && matchesSearch;
-    });
-  }, [achievements, vaultCategory, vaultSearch]);
 
   const navItems: { id: Tab; label: string; icon: string; badge?: number }[] = [
     { id: "dashboard", label: "Overview", icon: "◫" },
