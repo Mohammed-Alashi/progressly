@@ -628,8 +628,8 @@ function closePreview() {
         </div>
       </header>
 
-      <section className="career-content">
-        {activeTab === "dashboard" && (
+<section className="career-content" key={activeTab}>
+          {activeTab === "dashboard" && (
           <>
           <div className="page-heading dashboard-hero">
   <div className="hero-copy">

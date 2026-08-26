@@ -1858,3 +1858,365 @@ button {
     grid-template-columns: 1fr;
   }
 }
+/* =========================================================
+   PROGRESSLY MOTION SYSTEM
+   ========================================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+.career-topbar {
+  animation: topbar-enter 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.career-content {
+  animation: tab-enter 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Hero entrance */
+
+.dashboard-hero {
+  animation: hero-enter 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-copy > * {
+  animation: copy-enter 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-copy > *:nth-child(1) {
+  animation-delay: 0.08s;
+}
+
+.hero-copy > *:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.hero-copy > *:nth-child(3) {
+  animation-delay: 0.22s;
+}
+
+.hero-copy > *:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+.hero-copy > *:nth-child(5) {
+  animation-delay: 0.38s;
+}
+
+.hero-side {
+  animation: orbit-enter 0.9s 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.orbit-progress {
+  animation: orbit-draw 1.7s 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: center;
+}
+
+/* Cards enter one after another */
+
+.stat-card {
+  animation: card-enter 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.stat-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.stat-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.stat-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.dashboard-panel {
+  animation: panel-enter 0.8s 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Card interactions */
+
+.stat-card,
+.full-achievement-card,
+.progress-row,
+.draft-card,
+.setting-line,
+.selector-item {
+  will-change: transform;
+}
+
+.full-achievement-card,
+.draft-card,
+.selector-item {
+  transition:
+    transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.24s ease,
+    border-color 0.24s ease,
+    background 0.24s ease;
+}
+
+.full-achievement-card:hover,
+.draft-card:hover {
+  transform: translateY(-5px) scale(1.005);
+}
+
+.progress-row {
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    padding 0.2s ease;
+}
+
+.progress-row:hover {
+  transform: translateX(7px);
+}
+
+.progress-row:hover .progress-icon {
+  transform: rotate(-8deg) scale(1.08);
+}
+
+.progress-icon {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Buttons */
+
+.primary-button,
+.secondary-button,
+.theme-toggle,
+.career-nav button {
+  position: relative;
+  overflow: hidden;
+}
+
+.primary-button::after,
+.secondary-button::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
+}
+
+.primary-button:active,
+.secondary-button:active,
+.theme-toggle:active,
+.career-nav button:active {
+  transform: scale(0.96);
+}
+
+.primary-button:active::after,
+.secondary-button:active::after {
+  animation: button-ripple 0.55s ease-out;
+}
+
+.career-nav button {
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.career-nav button.active {
+  animation: nav-active 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Modal animations */
+
+.modal-backdrop {
+  animation: backdrop-in 0.25s ease both;
+}
+
+.achievement-modal,
+.delete-modal,
+.sign-in-modal,
+.post-review-modal {
+  animation: modal-pop 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Scroll reveal: elements show as you scroll down */
+
+@supports (animation-timeline: view()) {
+  .achievement-list .full-achievement-card,
+  .draft-list .draft-card,
+  .recent-list .progress-row,
+  .settings-panel .setting-line {
+    animation: scroll-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 8% cover 28%;
+  }
+}
+
+/* Keyboard accessibility */
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  outline-offset: 3px;
+}
+
+/* Animations */
+
+@keyframes topbar-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tab-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes copy-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes orbit-enter {
+  from {
+    opacity: 0;
+    transform: translateX(24px) scale(0.86);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes orbit-draw {
+  from {
+    opacity: 0;
+    stroke-dasharray: 0 100;
+    transform: rotate(-35deg);
+  }
+  to {
+    opacity: 1;
+    stroke-dasharray: 72 100;
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scroll-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes button-ripple {
+  0% {
+    opacity: 0.65;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(24);
+  }
+}
+
+@keyframes nav-active {
+  0% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-pop {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Respect users who disable motion */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
