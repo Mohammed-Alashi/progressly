@@ -2220,3 +2220,148 @@ select:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+/* =========================================================
+   MOBILE HERO FIX — compact premium layout
+   ========================================================= */
+
+@media (max-width: 760px) {
+  .career-topbar {
+    height: auto;
+    min-height: 0;
+    padding: 10px 12px;
+  }
+
+  .career-logo {
+    font-size: 20px;
+  }
+
+  .career-logo span {
+    width: 25px;
+    height: 25px;
+  }
+
+  .sign-in-button {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .career-nav {
+    width: 100%;
+    margin-top: 3px;
+    padding: 4px;
+  }
+
+  .career-nav button {
+    flex: 1;
+    padding: 10px 4px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .dashboard-hero {
+    min-height: 0;
+    padding: 26px 22px 22px;
+    border-radius: 23px;
+  }
+
+  .dashboard-hero::before,
+  .dashboard-hero::after {
+    opacity: 0.45;
+  }
+
+  .hero-copy {
+    max-width: 100%;
+  }
+
+  .hero-copy .section-label {
+    margin-bottom: 9px;
+    font-size: 10px;
+  }
+
+  .hero-eyebrow {
+    margin-bottom: 14px;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .dashboard-hero h1 {
+    max-width: 100%;
+    font-size: clamp(36px, 10vw, 42px);
+    letter-spacing: -2.5px;
+    line-height: 1.02;
+  }
+
+  /* لا تجبر الجزء البنفسجي ينزل كسطر لوحده */
+  .dashboard-hero h1 span {
+    display: inline;
+  }
+
+  .hero-description {
+    margin-top: 15px !important;
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+  }
+
+  .hero-chips {
+    gap: 6px;
+    margin-top: 18px;
+  }
+
+  .hero-chips span {
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  /* صف صغير: الدائرة + زر الإضافة */
+  .hero-side {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 98px 1fr;
+    align-items: center;
+    gap: 16px;
+    margin-top: 22px;
+  }
+
+  .weekly-orbit {
+    width: 96px;
+    height: 96px;
+  }
+
+  .orbit-track,
+  .orbit-progress {
+    stroke-width: 10;
+  }
+
+  .orbit-copy small,
+  .orbit-copy span {
+    font-size: 9px;
+  }
+
+  .orbit-copy strong {
+    font-size: 29px;
+    line-height: 1;
+  }
+
+  .hero-add-button {
+    width: 100%;
+    min-width: 0;
+    height: 58px;
+    padding: 0 13px;
+    align-self: center;
+    font-size: 13px;
+  }
+
+  .stat-grid {
+    gap: 12px;
+  }
+
+  .stat-card {
+    min-height: 130px;
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .stat-card b {
+    font-size: 40px;
+  }
+}
