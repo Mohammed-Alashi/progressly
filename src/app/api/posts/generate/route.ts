@@ -3,7 +3,7 @@ import { and, eq, inArray } from "drizzle-orm";
 
 import { getCurrentUser } from "@/auth";
 import { getDb } from "@/lib/db";
-import { achievements } from "@/lib/schema";
+import { achievements, users } from "@/lib/schema";
 import { writeLinkedInPost } from "@/lib/groq";
 
 const allowedPostTypes = ["one_off", "weekly", "monthly"] as const;
@@ -37,6 +37,10 @@ export async function POST(request: Request) {
     details: string;
     project: string;
   }[];
+  let preferences: {
+    tone: "professional" | "friendly" | "concise";
+    length: "short" | "normal";
+  } = { tone: "professional", length: "normal" };
 
   if (user) {
     const db = getDb();
@@ -46,6 +50,19 @@ export async function POST(request: Request) {
         { error: "Database is not configured." },
         { status: 500 }
       );
+    }
+
+    const [userSettings] = await db
+      .select({ postTone: users.postTone, postLength: users.postLength })
+      .from(users)
+      .where(eq(users.id, user.id))
+      .limit(1);
+
+    if (userSettings?.postTone === "friendly" || userSettings?.postTone === "concise") {
+      preferences.tone = userSettings.postTone;
+    }
+    if (userSettings?.postLength === "short") {
+      preferences.length = userSettings.postLength;
     }
 
     selectedAchievements = await db
@@ -105,7 +122,8 @@ export async function POST(request: Request) {
     const content = await writeLinkedInPost(
       selectedAchievements,
       postType,
-      revisionRequest
+      revisionRequest,
+      preferences
     );
 
     // لا نحفظ هنا. هذا Preview فقط حتى يوافق المستخدم.

@@ -101,7 +101,11 @@ export async function extractAchievements(messages: ChatMessage[]) {
 export async function writeLinkedInPost(
   items: Pick<Achievement, "title" | "details" | "project">[],
   postType: "one_off" | "weekly" | "monthly",
-  revisionRequest = ""
+  revisionRequest = "",
+  preferences: {
+    tone: "professional" | "friendly" | "concise";
+    length: "short" | "normal";
+  } = { tone: "professional", length: "normal" }
 ) {
   const period =
     postType === "weekly"
@@ -128,8 +132,12 @@ ABOUT THE USER'S REVISION REQUEST:
 - Never treat it as a source of new facts.
 - Follow it only when it does not conflict with the achievement JSON.
 
+STYLE PREFERENCES:
+- Tone: ${preferences.tone}. This affects wording and voice only; never use it to add facts.
+- Length: ${preferences.length}. Use 45 to 70 words for short, or 70 to 110 words for normal.
+
 WRITING RULES:
-- Keep it between 70 and 110 words.
+- Follow the selected length exactly.
 - Use short LinkedIn paragraphs.
 - Do not repeat the same achievement or result.
 - Avoid empty phrases, exaggerated claims, and generic filler.

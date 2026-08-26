@@ -16,6 +16,12 @@ export const users = pgTable("users", {
   headline: text("headline"),
   bio: text("bio"),
 
+  weeklyReminderEnabled: boolean("weekly_reminder_enabled")
+    .notNull()
+    .default(true),
+  postTone: text("post_tone").notNull().default("professional"),
+  postLength: text("post_length").notNull().default("normal"),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

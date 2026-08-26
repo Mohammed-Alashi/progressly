@@ -22,11 +22,22 @@ export async function GET(request: Request) {
 
   try {
     const activeUsers = await db
-      .select({ id: users.id, email: users.email })
+      .select({
+        id: users.id,
+        email: users.email,
+        postTone: users.postTone,
+        postLength: users.postLength,
+      })
       .from(users)
       .innerJoin(achievements, eq(achievements.userId, users.id))
-      .where(and(eq(achievements.status, "confirmed"), gte(achievements.createdAt, since)))
-      .groupBy(users.id, users.email);
+      .where(
+        and(
+          eq(achievements.status, "confirmed"),
+          eq(users.weeklyReminderEnabled, true),
+          gte(achievements.createdAt, since)
+        )
+      )
+      .groupBy(users.id, users.email, users.postTone, users.postLength);
 
     for (const user of activeUsers) {
       summary.processedUsers += 1;
@@ -43,7 +54,13 @@ export async function GET(request: Request) {
           .select({ title: achievements.title, details: achievements.details, project: achievements.project })
           .from(achievements)
           .where(and(eq(achievements.userId, user.id), eq(achievements.status, "confirmed"), gte(achievements.createdAt, since)));
-        const content = await writeLinkedInPost(weeklyAchievements, "weekly");
+        const content = await writeLinkedInPost(weeklyAchievements, "weekly", "", {
+          tone:
+            user.postTone === "friendly" || user.postTone === "concise"
+              ? user.postTone
+              : "professional",
+          length: user.postLength === "short" ? "short" : "normal",
+        });
 
         await db.insert(posts).values({
           userId: user.id,

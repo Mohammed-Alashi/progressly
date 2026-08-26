@@ -36,6 +36,12 @@ type PendingGuestImport = {
   previewDraft: DraftPreview | null;
 };
 
+type UserSettings = {
+  weeklyReminderEnabled: boolean;
+  postTone: "professional" | "friendly" | "concise";
+  postLength: "short" | "normal";
+};
+
 const pendingGuestImportKey = "progressly.pending-guest-import";
 
 function createGuestAchievement(form: Omit<Achievement, "id" | "achievedAt" | "createdAt">): Achievement {
@@ -90,6 +96,13 @@ const [savingDraft, setSavingDraft] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [sendingTestEmail, setSendingTestEmail] = useState(false);
   const [testEmailMessage, setTestEmailMessage] = useState("");
+  const [settings, setSettings] = useState<UserSettings>({
+    weeklyReminderEnabled: true,
+    postTone: "professional",
+    postLength: "normal",
+  });
+  const [savingSettings, setSavingSettings] = useState(false);
+  const [settingsMessage, setSettingsMessage] = useState("");
   const hasHandledPendingImport = useRef(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAchievement, setEditingAchievement] =
@@ -196,6 +209,25 @@ const [savingDraft, setSavingDraft] = useState(false);
     }
   }, [status]);
 
+  useEffect(() => {
+    if (status !== "authenticated") return;
+
+    const loadSettings = async () => {
+      try {
+        const response = await fetch("/api/settings");
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error ?? "Could not load settings.");
+        setSettings(data.settings);
+      } catch (error) {
+        setSettingsMessage(
+          error instanceof Error ? error.message : "Could not load settings."
+        );
+      }
+    };
+
+    void loadSettings();
+  }, [status]);
+
   const stats = useMemo(
     () => ({
       today: achievements.filter((item) =>
@@ -264,6 +296,32 @@ const [savingDraft, setSavingDraft] = useState(false);
       );
     } finally {
       setSendingTestEmail(false);
+    }
+  }
+
+  async function saveSettings() {
+    if (!isSignedIn || savingSettings) return;
+
+    setSavingSettings(true);
+    setSettingsMessage("");
+
+    try {
+      const response = await fetch("/api/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settings),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Could not save settings.");
+
+      setSettings(data.settings);
+      setSettingsMessage("Settings saved.");
+    } catch (error) {
+      setSettingsMessage(
+        error instanceof Error ? error.message : "Could not save settings."
+      );
+    } finally {
+      setSavingSettings(false);
     }
   }
 
@@ -573,23 +631,57 @@ function closePreview() {
       <section className="career-content">
         {activeTab === "dashboard" && (
           <>
-            <div className="page-heading">
-              <div>
-                <p className="section-label">YOUR PROGRESS SPACE</p>
-                <h1>Build proof of your progress.</h1>
-                <p>
-                  Record real work today. Turn it into your professional story
-                  when you need it.
-                </p>
-              </div>
+          <div className="page-heading dashboard-hero">
+  <div className="hero-copy">
+    <p className="section-label">CAREER INTELLIGENCE</p>
 
-              <button
-                className="primary-button"
-                onClick={openNewAchievement}
-              >
-                <span>+</span> Add achievement
-              </button>
-            </div>
+    <p className="hero-eyebrow">
+      Your evidence. Your growth. Your next opportunity.
+    </p>
+
+    <h1>
+      Make your progress
+      <span> impossible to miss.</span>
+    </h1>
+
+    <p className="hero-description">
+      Capture meaningful work as it happens, then turn it into a career story
+      you are proud to share.
+    </p>
+
+    <div className="hero-chips">
+      <span>✦ Evidence-first</span>
+      <span>◌ Private by default</span>
+      <span>↗ LinkedIn ready</span>
+    </div>
+  </div>
+
+  <div className="hero-side">
+    <div className="weekly-orbit">
+      <svg viewBox="0 0 180 180" aria-hidden="true">
+        <circle className="orbit-track" cx="90" cy="90" r="70" />
+        <circle
+          className="orbit-progress"
+          cx="90"
+          cy="90"
+          r="70"
+          pathLength="100"
+          strokeDasharray="72 100"
+        />
+      </svg>
+
+      <div className="orbit-copy">
+        <small>This week</small>
+        <strong>{stats.week}</strong>
+        <span>wins captured</span>
+      </div>
+    </div>
+
+    <button className="primary-button hero-add-button" onClick={openNewAchievement}>
+      <span>+</span> Add achievement
+    </button>
+  </div>
+</div>
 
             <div className="stat-grid">
               <article className="stat-card accent-purple">
@@ -974,24 +1066,100 @@ function closePreview() {
             </div>
 
             {isSignedIn && (
-              <div className="setting-line">
-                <div>
-                  <b>Weekly email reminders</b>
-                  <p>Get an email when your weekly LinkedIn draft is ready.</p>
-                  {testEmailMessage && (
-                    <p className="test-email-message" role="status">
-                      {testEmailMessage}
-                    </p>
-                  )}
+              <>
+                <div className="setting-line">
+                  <div>
+                    <b>Weekly email reminders</b>
+                    <p>Receive an email when your weekly draft is ready.</p>
+                  </div>
+                  <label className="settings-toggle">
+                    <input
+                      type="checkbox"
+                      checked={settings.weeklyReminderEnabled}
+                      onChange={(event) =>
+                        setSettings({
+                          ...settings,
+                          weeklyReminderEnabled: event.target.checked,
+                        })
+                      }
+                    />
+                    <span>{settings.weeklyReminderEnabled ? "On" : "Off"}</span>
+                  </label>
                 </div>
-                <button
-                  className="secondary-button settings-email-button"
-                  disabled={sendingTestEmail}
-                  onClick={() => void sendTestEmail()}
-                >
-                  {sendingTestEmail ? "Sending..." : "Send test email"}
-                </button>
-              </div>
+
+                <div className="setting-line settings-style-line">
+                  <div>
+                    <b>Post style</b>
+                    <p>Choose how your LinkedIn drafts should sound.</p>
+                  </div>
+                  <div className="settings-selectors">
+                    <label>
+                      Tone
+                      <select
+                        value={settings.postTone}
+                        onChange={(event) =>
+                          setSettings({
+                            ...settings,
+                            postTone: event.target.value as UserSettings["postTone"],
+                          })
+                        }
+                      >
+                        <option value="professional">Professional</option>
+                        <option value="friendly">Friendly</option>
+                        <option value="concise">Concise</option>
+                      </select>
+                    </label>
+                    <label>
+                      Length
+                      <select
+                        value={settings.postLength}
+                        onChange={(event) =>
+                          setSettings({
+                            ...settings,
+                            postLength: event.target.value as UserSettings["postLength"],
+                          })
+                        }
+                      >
+                        <option value="short">Short</option>
+                        <option value="normal">Normal</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="setting-line">
+                  <div>
+                    <b>Email delivery</b>
+                    <p>Send a test message to your signed-in email address.</p>
+                    {testEmailMessage && (
+                      <p className="test-email-message" role="status">
+                        {testEmailMessage}
+                      </p>
+                    )}
+                    {settingsMessage && (
+                      <p className="test-email-message" role="status">
+                        {settingsMessage}
+                      </p>
+                    )}
+                  </div>
+                  <div className="settings-actions">
+                    <button
+                      className="secondary-button settings-email-button"
+                      disabled={sendingTestEmail}
+                      onClick={() => void sendTestEmail()}
+                    >
+                      {sendingTestEmail ? "Sending..." : "Send test email"}
+                    </button>
+                    <button
+                      className="primary-button settings-email-button"
+                      disabled={savingSettings}
+                      onClick={() => void saveSettings()}
+                    >
+                      {savingSettings ? "Saving..." : "Save settings"}
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
 
           </section>
