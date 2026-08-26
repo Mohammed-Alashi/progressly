@@ -119,6 +119,7 @@ function Dashboard() {
   const [vaultSearch, setVaultSearch] = useState("");
   const [vaultCategory, setVaultCategory] = useState("all");
   const [copiedDraftId, setCopiedDraftId] = useState<string | null>(null);
+  const [showLanding, setShowLanding] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
@@ -715,21 +716,27 @@ function Dashboard() {
     { id: "settings", label: "Settings", icon: "⚙" },
   ];
 
-  const showEntry = !isSignedIn && !hasChosenGuest;
+  const showEntry =
+    showLanding || (status === "unauthenticated" && !hasChosenGuest);
 
   if (showEntry) {
     return (
       <main className={`career-app ${theme} entry-screen`}>
+        {/* TOP NAVBAR */}
         <header className="entry-navbar">
-          <div className="sidebar-brand">
+          <button
+            className="sidebar-brand"
+            aria-label="Go to home"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
             <div className="brand-icon-wrapper">✦</div>
             <div className="brand-text">
               <span className="brand-name">Progressly</span>
-              <span className="brand-badge">Career AI</span>
+              <span className="brand-badge">Career AI System</span>
             </div>
-          </div>
+          </button>
 
-          <div className="topbar-right">
+          <div className="entry-nav-actions">
             <button
               className="theme-toggle-btn"
               onClick={() => setTheme((c) => (c === "light" ? "dark" : "light"))}
@@ -739,116 +746,420 @@ function Dashboard() {
             </button>
 
             <button
-              className="primary-button"
+              className="secondary-button"
+              style={{ display: "none" }}
               onClick={() => void startGoogleSignIn()}
             >
-              Sign in with Google
+              Sign In
+            </button>
+
+            <button
+              className="primary-button"
+              onClick={() => isSignedIn ? setShowLanding(false) : void startGoogleSignIn()}
+            >
+              {isSignedIn ? "Back to Dashboard →" : "Start Building Your Story →"}
             </button>
           </div>
         </header>
 
-        <section className="entry-hero-section">
-          <div className="entry-hero-copy">
-            <p className="section-label">EVIDENCE-BASED CAREER PROGRESSION</p>
-            <h1>
-              Your real achievements, <span>transformed into influence.</span>
-            </h1>
-            <p>
-              Stop prompting AI with vague ideas. Progressly logs your verified work,
-              milestones, and solved problems, then crafts high-impact LinkedIn post
-              drafts that represent you accurately.
-            </p>
+        {/* 1 & 2. HERO + PROGRESSLY AI CORE VISUAL */}
+        <section className="landing-section-wrapper" style={{ paddingBottom: 60 }}>
+          <div className="landing-hero-grid">
+            {/* HERO LEFT COPY */}
+            <div className="hero-copy-col">
+              <div className="hero-badge-pill">
+                ✦ AI-POWERED CAREER PROGRESS SYSTEM
+              </div>
 
-            <div className="entry-hero-cta">
+              <h1 className="hero-main-title">
+                Your work deserves<br />
+                <span className="hero-gradient-text">to be seen.</span>
+              </h1>
+
+              <p className="hero-subtext">
+                Progressly captures your real achievements, builds a verified history of your growth, and transforms meaningful progress into professional LinkedIn content.
+              </p>
+
+              <div className="hero-cta-group">
+                <button
+                  className="primary-button hero-cta-btn"
+                  onClick={() => isSignedIn ? setShowLanding(false) : void startGoogleSignIn()}
+                >
+                  {isSignedIn ? "Back to Dashboard →" : "Start Building Your Story →"}
+                </button>
+
+                <button
+                  className="secondary-button hero-cta-btn"
+                  onClick={() => setShowGuestModal(true)}
+                >
+                  Explore as Guest
+                </button>
+              </div>
+
+              <div className="hero-trust-row">
+                <div className="hero-trust-item">
+                  <span>✓</span> 100% Evidence-based
+                </div>
+                <div className="hero-trust-item">
+                  <span>✓</span> Zero Hallucinations
+                </div>
+                <div className="hero-trust-item">
+                  <span>✓</span> Private Career Vault
+                </div>
+              </div>
+            </div>
+
+            {/* HERO RIGHT VISUAL: PROGRESSLY AI CORE NEXUS */}
+            <div className="hero-visual-col">
+              <div className="hero-visual-canvas">
+                {/* Background Ambient Glow Orb */}
+                <div className="hero-canvas-glow"></div>
+
+                {/* SVG Flow Connections */}
+                <svg className="hero-svg-overlay" viewBox="0 0 540 480" fill="none">
+                  <defs>
+                    <linearGradient id="coreFlowGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#38bdf8" />
+                      <stop offset="50%" stopColor="#3b82f6" />
+                      <stop offset="100%" stopColor="#06b6d4" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Flow Paths to Core */}
+                  <path d="M 120 70 Q 200 130 270 210" className="svg-flow-line" />
+                  <path d="M 120 400 Q 200 330 270 250" className="svg-flow-line" />
+                  <path d="M 420 70 Q 340 130 270 210" className="svg-flow-line" />
+                  <path d="M 270 260 Q 320 330 380 370" className="svg-flow-line" />
+                </svg>
+
+                {/* Central AI Core */}
+                <div className="ai-core-nexus">
+                  <div className="ai-core-icon">✦</div>
+                  <div className="ai-core-label">Progressly AI</div>
+                </div>
+
+                {/* Floating Achievement 1 (Top-Left) */}
+                <div className="hero-floating-card top-left">
+                  <div className="float-icon-box">✦</div>
+                  <div className="float-text">
+                    <h5>Solved a production bug</h5>
+                    <p>Production · -45% latency</p>
+                  </div>
+                </div>
+
+                {/* Floating Achievement 2 (Bottom-Left) */}
+                <div className="hero-floating-card bottom-left">
+                  <div className="float-icon-box">◈</div>
+                  <div className="float-text">
+                    <h5>Learned Next.js</h5>
+                    <p>Full-Stack · API Routes</p>
+                  </div>
+                </div>
+
+                {/* Floating Achievement 3 (Mid-Top) */}
+                <div className="hero-floating-card mid-top">
+                  <div className="float-icon-box">▣</div>
+                  <div className="float-text">
+                    <h5>Shipped a new feature</h5>
+                    <p>Released · AI Post Studio</p>
+                  </div>
+                </div>
+
+                {/* Output Side: LinkedIn Post Preview Mock */}
+                <div className="hero-output-preview">
+                  <div className="hero-output-header">
+                    <div className="hero-output-avatar">P</div>
+                    <div>
+                      <div className="hero-output-name">Career Story</div>
+                      <div className="hero-output-meta">Generated from verified wins</div>
+                    </div>
+                  </div>
+
+                  <p className="hero-output-text">
+                    “This week, we solved our production latency issue by optimizing Postgres indexes and refactoring query caching in our serverless backend...”
+                  </p>
+
+                  <div className="hero-output-tag">
+                    <span>✨</span> LinkedIn Draft Ready
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 3. HOW IT WORKS SECTION */}
+        <section className="landing-section-wrapper">
+          <div className="landing-section-header">
+            <p className="section-label" style={{ justifyContent: "center" }}>THE JOURNEY</p>
+            <h2>HOW IT WORKS</h2>
+            <p>
+              A seamless, structured workflow that turns daily work into an unstoppable career narrative.
+            </p>
+          </div>
+
+          <div className="how-journey-container">
+            <div className="how-journey-line"></div>
+
+            <div className="how-step-card">
+              <div className="how-step-num">01</div>
+              <h4>1. Capture</h4>
+              <p>Record your daily work, learnings, and wins in seconds.</p>
+            </div>
+
+            <div className="how-step-card">
+              <div className="how-step-num">02</div>
+              <h4>2. Build Evidence</h4>
+              <p>Progressly turns them into verifiable, structured achievements.</p>
+            </div>
+
+            <div className="how-step-card">
+              <div className="how-step-num">03</div>
+              <h4>3. AI Understands</h4>
+              <p>AI analyzes context and extracts your real technical impact.</p>
+            </div>
+
+            <div className="how-step-card">
+              <div className="how-step-num">04</div>
+              <h4>4. Create Content</h4>
+              <p>Generate professional, factual LinkedIn post drafts.</p>
+            </div>
+
+            <div className="how-step-card">
+              <div className="how-step-num">05</div>
+              <h4>5. Share & Grow</h4>
+              <p>Build your professional story and authority over time.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* 4. THE PROBLEM & VERTICAL TIMELINE STORY */}
+        <section className="landing-section-wrapper">
+          <div className="problem-grid-layout">
+            <div className="problem-copy">
+              <p className="section-label">THE INVISIBLE EFFORT</p>
+              <h3>
+                You accomplish more<br />
+                than you remember.
+              </h3>
+              <p>
+                Bugs fixed. Skills learned. Projects completed. Problems solved. Most of it disappears into old chats, commits, notes, and fading memory.
+              </p>
+              <div className="problem-highlight-box">
+                ✦ Progressly turns scattered progress into verified career evidence.
+              </div>
+            </div>
+
+            <div className="timeline-visual-card">
+              <div className="timeline-track-list">
+                <div className="timeline-vertical-line"></div>
+
+                <div className="timeline-node-item">
+                  <div className="timeline-dot">✓</div>
+                  <div className="timeline-date">AUG 12</div>
+                  <div className="timeline-title">Fixed authentication issue</div>
+                  <div className="project-pill" style={{ width: "fit-content", marginTop: 4 }}>Security & NextAuth</div>
+                </div>
+
+                <div className="timeline-node-item">
+                  <div className="timeline-dot">✓</div>
+                  <div className="timeline-date">AUG 16</div>
+                  <div className="timeline-title">Learned Next.js API Routes</div>
+                  <div className="project-pill" style={{ width: "fit-content", marginTop: 4 }}>Full-Stack Architecture</div>
+                </div>
+
+                <div className="timeline-node-item">
+                  <div className="timeline-dot">✓</div>
+                  <div className="timeline-date">AUG 21</div>
+                  <div className="timeline-title">Shipped CareerFlow feature</div>
+                  <div className="project-pill" style={{ width: "fit-content", marginTop: 4 }}>Production Release</div>
+                </div>
+
+                <div className="timeline-node-item">
+                  <div className="timeline-dot pulse">●</div>
+                  <div className="timeline-date" style={{ color: "var(--primary)" }}>TODAY</div>
+                  <div className="timeline-title" style={{ fontWeight: 700, color: "var(--accent-cyan)" }}>
+                    Your story keeps growing...
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 5. FROM WORK TO PROFESSIONAL STORY */}
+        <section className="landing-section-wrapper">
+          <div className="landing-section-header">
+            <p className="section-label" style={{ justifyContent: "center" }}>AUTHENTIC CAREER STORYTELLING</p>
+            <h2>From your work to your professional story.</h2>
+            <p>
+              See how everyday development milestones transform into compelling, fact-grounded LinkedIn posts.
+            </p>
+          </div>
+
+          <div className="transformation-grid">
+            {/* LEFT: REAL PROGRESS CARDS */}
+            <div className="trans-progress-col">
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700, color: "var(--accent-cyan)", marginBottom: 4 }}>
+                YOUR REAL PROGRESS
+              </div>
+              <div className="trans-card">
+                <div className="trans-card-icon">✦</div>
+                <div className="trans-card-text">
+                  <h5>Fixed category matching bug</h5>
+                </div>
+              </div>
+              <div className="trans-card">
+                <div className="trans-card-icon">◈</div>
+                <div className="trans-card-text">
+                  <h5>Improved option handling</h5>
+                </div>
+              </div>
+              <div className="trans-card">
+                <div className="trans-card-icon">▣</div>
+                <div className="trans-card-text">
+                  <h5>Learned fuzzy matching</h5>
+                </div>
+              </div>
+              <div className="trans-card">
+                <div className="trans-card-icon">◌</div>
+                <div className="trans-card-text">
+                  <h5>Optimized response time</h5>
+                </div>
+              </div>
+            </div>
+
+            {/* CENTER: PROGRESSLY AI NEXUS */}
+            <div className="trans-nexus-col">
+              <div className="nexus-badge-core">
+                <span>✦</span>
+                <b>Progressly AI</b>
+              </div>
+            </div>
+
+            {/* RIGHT: LINKEDIN POST PREVIEW */}
+            <div className="trans-post-card">
+              <div className="hero-output-header">
+                <div className="hero-output-avatar">✦</div>
+                <div>
+                  <div className="hero-output-name">Engineering Milestone</div>
+                  <div className="hero-output-meta">LinkedIn Post Draft · Verified Evidence</div>
+                </div>
+              </div>
+              <p style={{ fontSize: 13, color: "var(--text)", lineHeight: 1.6, margin: "0 0 14px 0" }}>
+                “This week, I tackled our core search & matching latency. By introducing fuzzy category indexing and refactoring option handling, we cut response times by 38% while improving query resilience across production...”
+              </p>
+              <div style={{ display: "flex", gap: 8 }}>
+                <span className="activity-tag public">100% Real Facts</span>
+                <span className="activity-tag">Zero Hallucinations</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="trans-banner-bottom">
+            ✦ No invented achievements. No empty AI content. Just your actual progress, professionally expressed.
+          </div>
+        </section>
+
+        {/* 6. ONE WEEK WITH PROGRESSLY */}
+        <section className="landing-section-wrapper">
+          <div className="landing-section-header">
+            <p className="section-label" style={{ justifyContent: "center" }}>THE WEEKLY RHYTHM</p>
+            <h2>One week with Progressly.</h2>
+            <p>
+              How 2 minutes of lightweight logging builds effortless weekly publishing power.
+            </p>
+          </div>
+
+          <div className="weekly-flow-grid">
+            <div className="weekly-step-card">
+              <div>
+                <div className="weekly-day-pill">● MONDAY</div>
+                <h4>Solved a difficult problem.</h4>
+                <p>Resolved race condition in event streaming pipeline.</p>
+              </div>
+              <div style={{ marginTop: 14, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>
+                Logged in 30s ✓
+              </div>
+            </div>
+
+            <div className="weekly-step-card">
+              <div>
+                <div className="weekly-day-pill">● WEDNESDAY</div>
+                <h4>Learned a new technology.</h4>
+                <p>Mastered Drizzle ORM relations & database migrations.</p>
+              </div>
+              <div style={{ marginTop: 14, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>
+                Evidence linked ✓
+              </div>
+            </div>
+
+            <div className="weekly-step-card">
+              <div>
+                <div className="weekly-day-pill">● FRIDAY</div>
+                <h4>Shipped a new feature.</h4>
+                <p>Deployed AI Post Composer with live interactive preview.</p>
+              </div>
+              <div style={{ marginTop: 14, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text-muted)" }}>
+                Milestone saved ✓
+              </div>
+            </div>
+
+            <div className="weekly-step-card final">
+              <div>
+                <div className="weekly-day-pill" style={{ color: "#38bdf8" }}>✨ SUNDAY</div>
+                <h4 style={{ color: "#38bdf8" }}>Your weekly story is ready.</h4>
+                <p>Progressly compiled your wins into a publication-ready LinkedIn digest.</p>
+              </div>
               <button
                 className="primary-button"
-                onClick={() => void startGoogleSignIn()}
+                style={{ marginTop: 14, padding: "8px 14px", fontSize: 12, width: "100%" }}
+                onClick={() => isSignedIn ? setShowLanding(false) : void startGoogleSignIn()}
               >
-                Get Started Free with Google →
+                {isSignedIn ? "Back to Dashboard ↗" : "Publish Draft ↗"}
               </button>
+            </div>
+          </div>
+        </section>
 
+        {/* 7. FINAL CTA & FOOTER */}
+        <section className="landing-section-wrapper">
+          <div className="final-cta-card">
+            <h2>
+              A year from now,<br />
+              you'll wish you started tracking today.
+            </h2>
+            <p>
+              Build a career history based on what you actually accomplished.
+            </p>
+            <div className="final-cta-actions">
               <button
-                className="secondary-button"
+                className="primary-button hero-cta-btn"
+                onClick={() => isSignedIn ? setShowLanding(false) : void startGoogleSignIn()}
+              >
+                {isSignedIn ? "Back to Dashboard →" : "Start Building Your Story →"}
+              </button>
+              <button
+                className="secondary-button hero-cta-btn"
                 onClick={() => setShowGuestModal(true)}
               >
                 Explore as Guest
               </button>
             </div>
           </div>
-
-          <div className="entry-preview-card">
-            <div className="kpi-top">
-              <span className="section-label">LIVE PREVIEW</span>
-              <span className="brand-badge">Evidence Studio</span>
-            </div>
-            <div className="activity-list" style={{ marginTop: 16 }}>
-              <div className="activity-item">
-                <div className="activity-left">
-                  <div className="activity-cat-icon">✦</div>
-                  <div className="activity-details">
-                    <h4>Shipped serverless query optimization</h4>
-                    <p>
-                      <span className="project-pill">Production</span>
-                      Reduced latency by 45% using Postgres indexing
-                    </p>
-                  </div>
-                </div>
-                <span className="activity-tag public">Verified</span>
-              </div>
-
-              <div className="activity-item">
-                <div className="activity-left">
-                  <div className="activity-cat-icon">◈</div>
-                  <div className="activity-details">
-                    <h4>Completed Advanced Distributed Systems</h4>
-                    <p>
-                      <span className="project-pill">Learning</span>
-                      Consensus protocols & Raft implementation
-                    </p>
-                  </div>
-                </div>
-                <span className="activity-tag">Internal</span>
-              </div>
-            </div>
-
-            <div className="kpi-card" style={{ marginTop: 20 }}>
-              <div className="kpi-top">
-                <span className="kpi-title">AI LinkedIn Composer</span>
-                <span className="ai-engine-tag"><span>●</span> Ready to Publish</span>
-              </div>
-              <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "8px 0 0 0", lineHeight: 1.5 }}>
-                “This week, I focused on database efficiency and lowered query latency by 45% in our serverless environment. Engineering progress is about continuous iteration...”
-              </p>
-            </div>
-          </div>
         </section>
 
-        <section className="entry-features-grid">
-          <div className="entry-feature-card">
-            <div className="entry-feature-icon">✦</div>
-            <div>
-              <h3 style={{ margin: "0 0 4px 0", fontSize: 15, fontWeight: 700 }}>Evidence Vault</h3>
-              <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>Capture real wins, code links, and learning milestones daily.</p>
-            </div>
+        {/* FOOTER */}
+        <footer className="entry-footer">
+          <div className="sidebar-brand">
+            <div className="brand-icon-wrapper" style={{ width: 28, height: 28, fontSize: 13 }}>✦</div>
+            <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 15, color: "var(--text)" }}>Progressly</span>
           </div>
+          <div>Evidence-based AI Career Progress System.</div>
+          <div>© {new Date().getFullYear()} Progressly. All rights reserved.</div>
+        </footer>
 
-          <div className="entry-feature-card">
-            <div className="entry-feature-icon">◈</div>
-            <div>
-              <h3 style={{ margin: "0 0 4px 0", fontSize: 15, fontWeight: 700 }}>Growth Momentum</h3>
-              <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>Track your weekly velocity and career progress charts in real time.</p>
-            </div>
-          </div>
-
-          <div className="entry-feature-card">
-            <div className="entry-feature-icon">↗</div>
-            <div>
-              <h3 style={{ margin: "0 0 4px 0", fontSize: 15, fontWeight: 700 }}>AI Post Composer</h3>
-              <p style={{ margin: 0, fontSize: 13, color: "var(--text-muted)" }}>Turn verified achievements into concise, factual LinkedIn posts.</p>
-            </div>
-          </div>
-        </section>
-
+        {/* GUEST MODE CONFIRMATION MODAL */}
         {showGuestModal && (
           <div className="modal-backdrop" onClick={() => setShowGuestModal(false)}>
             <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
@@ -886,7 +1197,11 @@ function Dashboard() {
         <div className="sidebar-header">
           <button
             className="sidebar-brand"
-            onClick={() => setActiveTab("dashboard")}
+            aria-label="Go to home"
+            onClick={() => {
+              setShowLanding(true);
+              setSidebarOpen(false);
+            }}
           >
             <div className="brand-icon-wrapper">✦</div>
             <div className="brand-text">
