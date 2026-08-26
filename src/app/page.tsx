@@ -632,29 +632,52 @@ function closePreview() {
           {activeTab === "dashboard" && (
           <>
           <div className="page-heading dashboard-hero">
-  <div className="hero-copy">
-    <p className="section-label">CAREER INTELLIGENCE</p>
+            <div className="hero-copy">
+              <p className="section-label">Your record</p>
 
-    <p className="hero-eyebrow">
-      Your evidence. Your growth. Your next opportunity.
-    </p>
+              <h1>
+                Every win,
+                <span> logged.</span>
+              </h1>
 
-    <h1>
-      Make your progress
-      <span> impossible to miss.</span>
-    </h1>
+              <div className="hero-chips">
+                <span>✦ Private</span>
+                <span>↗ Share-ready</span>
+              </div>
+            </div>
 
-    <p className="hero-description">
-      Capture meaningful work as it happens, then turn it into a career story
-      you are proud to share.
-    </p>
+            <div className="hero-side">
+              <div className="hero-seal">
+                <svg viewBox="0 0 200 200" aria-hidden="true">
+                  <circle className="seal-track" cx="100" cy="100" r="86" />
+                  <circle className="seal-ring" cx="100" cy="100" r="70" />
+                  <path
+                    id="sealTextPath"
+                    d="M100,100 m-82,0 a82,82 0 1,1 164,0 a82,82 0 1,1 -164,0"
+                    fill="none"
+                  />
+                  <text className="seal-text">
+                    <textPath href="#sealTextPath" startOffset="0%">
+                      PROGRESSLY · VERIFIED CAREER RECORD · PROGRESSLY · VERIFIED CAREER RECORD ·
+                    </textPath>
+                  </text>
+                </svg>
 
-    <div className="hero-chips">
-      <span>✦ Evidence-first</span>
-      <span>◌ Private by default</span>
-      <span>↗ LinkedIn ready</span>
-    </div>
-  </div>
+                <div className="seal-center">
+                  <strong>{achievements.length}</strong>
+                  <small>entries logged</small>
+                </div>
+              </div>
+
+              <button
+                className="primary-button hero-add-button"
+                onClick={openNewAchievement}
+              >
+                <span>+</span> Add achievement
+              </button>
+            </div>
+          </div>
+
 
   <div className="hero-side">
     <div className="weekly-orbit">
@@ -681,7 +704,6 @@ function closePreview() {
       <span>+</span> Add achievement
     </button>
   </div>
-</div>
 
             <div className="stat-grid">
               <article className="stat-card accent-purple">
