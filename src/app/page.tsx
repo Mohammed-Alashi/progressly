@@ -635,36 +635,139 @@ function closePreview() {
     { id: "settings", label: "Settings", icon: "⚙" },
   ];
 
-    if (!isSignedIn && !hasChosenGuest) {
+  const showEntry = !isSignedIn && !hasChosenGuest;
+
+  function handleLogoClick() {
+    if (showEntry) {
+      // already on entry screen, maybe reset state if needed
+      return;
+    }
+    setActiveTab("dashboard");
+  }
+
+  if (showEntry) {
     return (
-      <main className={`career-app ${theme} welcome-page`}>
-        <section className="welcome-card">
-          <button className="career-logo welcome-logo" type="button">
-            <span>✦</span>
-            Progressly
-          </button>
+      <main className={`career-app ${theme} entry-screen`}>
+        <header className="entry-header">
+          <div className="entry-header-content">
+            <button
+              className="career-logo"
+              onClick={handleLogoClick}
+              aria-label="Progressly Home"
+            >
+              <span>✦</span>
+              Progressly
+            </button>
 
-          <div className="welcome-content">
-            <p className="section-label">WELCOME</p>
-            <h1>Keep track of work that matters.</h1>
-            <p>
-              Track meaningful progress and turn it into a story you can share.
-            </p>
-
-            <div className="welcome-actions">
+            <div className="entry-header-actions">
               <button
-                className="primary-button"
+                className="theme-toggle"
+                onClick={() =>
+                  setTheme((current) => (current === "light" ? "dark" : "light"))
+                }
+                aria-label="Toggle theme"
+              >
+                {theme === "light" ? "☾" : "☀"}
+              </button>
+
+              <button
+                className="secondary-button header-google-button"
                 onClick={() => void startGoogleSignIn()}
               >
-                Continue with Google
+                Sign in with Google
               </button>
+            </div>
+          </div>
+        </header>
 
-              <button
-                className="secondary-button"
-                onClick={() => setShowGuestModal(true)}
-              >
-                Continue as guest
-              </button>
+        <section className="entry-hero">
+          <div className="entry-grid">
+            <div className="entry-left">
+              <h1>Your work deserves a record.</h1>
+              <p className="entry-description">
+                Capture achievements, see your progress over time, and turn real
+                work into LinkedIn drafts.
+              </p>
+
+              <div className="entry-actions">
+                <button
+                  className="primary-button"
+                  onClick={() => void startGoogleSignIn()}
+                >
+                  Get started with Google
+                </button>
+
+                <button
+                  className="secondary-button"
+                  onClick={() => setShowGuestModal(true)}
+                >
+                  Explore as guest
+                </button>
+              </div>
+            </div>
+
+            <div className="entry-right">
+              <div className="dashboard-preview">
+                <div className="preview-section">
+                  <p className="section-label">TODAY&apos;S PROGRESS</p>
+                  <div className="preview-activity">
+                    <div className="preview-row">
+                      <div className="preview-icon">✦</div>
+                      <div className="preview-copy">
+                        <h3>Launched project beta</h3>
+                        <p>Work · Today</p>
+                      </div>
+                    </div>
+                    <div className="preview-row">
+                      <div className="preview-icon">◈</div>
+                      <div className="preview-copy">
+                        <h3>Fixed 12 production bugs</h3>
+                        <p>Work · Today</p>
+                      </div>
+                    </div>
+                    <div className="preview-row">
+                      <div className="preview-icon">▣</div>
+                      <div className="preview-copy">
+                        <h3>Mentored junior developer</h3>
+                        <p>People · Today</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="preview-bottom-grid">
+                  <div className="preview-stat-box">
+                    <p className="section-label">WEEKLY SUMMARY</p>
+                    <strong>14</strong>
+                    <span>Wins recorded</span>
+                  </div>
+
+                  <div className="preview-draft-box">
+                    <p className="section-label">DRAFT READY</p>
+                    <div className="preview-draft-row">
+                      <span>↗</span>
+                      <p>Weekly progress update...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="entry-features">
+          <div className="features-grid">
+            <div className="feature-item">
+              <div className="feature-icon">✦</div>
+              <h3>Capture achievements</h3>
+            </div>
+            <div className="feature-item">
+              <div className="feature-icon">◈</div>
+              <h3>Review your growth</h3>
+            </div>
+            <div className="feature-item">
+              <div className="feature-icon">↗</div>
+              <h3>Create approved LinkedIn drafts</h3>
             </div>
           </div>
         </section>
@@ -690,8 +793,9 @@ function closePreview() {
               <p className="section-label">GUEST MODE</p>
               <h2>Continue as guest?</h2>
               <p>
-                Your achievements will only stay on this device. Sign in with
-                Google to save them securely to your account.
+                Your achievements will stay on this device, but won&apos;t be
+                synced. Sign in with Google to save your progress permanently
+                to your account.
               </p>
 
               <div className="sign-in-modal-actions">
@@ -716,10 +820,7 @@ function closePreview() {
   return (
     <main className={`career-app ${theme}`}>
       <header className="career-topbar">
-        <button
-          className="career-logo"
-          onClick={() => setActiveTab("dashboard")}
-        >
+        <button className="career-logo" onClick={handleLogoClick}>
           <span>✦</span>
           Progressly
         </button>
