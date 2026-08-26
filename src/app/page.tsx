@@ -111,6 +111,13 @@ const [savingDraft, setSavingDraft] = useState(false);
   useState<Achievement | null>(null);
   const [loading, setLoading] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("light");
+    const [hasChosenGuest, setHasChosenGuest] = useState(false);
+  const [showGuestModal, setShowGuestModal] = useState(false);
+  const [profileName, setProfileName] = useState("");
+  const [profileNameInput, setProfileNameInput] = useState("");
+  const [profileEmail, setProfileEmail] = useState("");
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [profileMessage, setProfileMessage] = useState("");
 
   const [form, setForm] = useState({
     title: "",
@@ -228,6 +235,29 @@ const [savingDraft, setSavingDraft] = useState(false);
     void loadSettings();
   }, [status]);
 
+    useEffect(() => {
+    if (status === "unauthenticated") {
+      setHasChosenGuest(
+        window.sessionStorage.getItem("progressly.guest-mode") === "true"
+      );
+    }
+
+    if (status !== "authenticated") return;
+
+    const loadProfile = async () => {
+      const response = await fetch("/api/profile");
+      const data = await response.json();
+
+      if (response.ok && data.user) {
+        setProfileName(data.user.name ?? "");
+        setProfileNameInput(data.user.name ?? "");
+        setProfileEmail(data.user.email ?? "");
+      }
+    };
+
+    void loadProfile();
+  }, [status]);
+
   const stats = useMemo(
     () => ({
       today: achievements.filter((item) =>
@@ -248,8 +278,9 @@ const [savingDraft, setSavingDraft] = useState(false);
   }
 
   const isSignedIn = Boolean(session?.user);
-  const userName = session?.user?.name || session?.user?.email || "Guest";
-  const userInitials = userName
+  const userName =
+    profileName || session?.user?.name || session?.user?.email || "Guest";
+    const userInitials = userName
     .split(" ")
     .filter(Boolean)
     .slice(0, 2)
@@ -560,12 +591,127 @@ function closePreview() {
   setPostError("");
 }
 
+  function continueAsGuest() {
+    window.sessionStorage.setItem("progressly.guest-mode", "true");
+    setShowGuestModal(false);
+    setHasChosenGuest(true);
+  }
+
+  async function saveProfileName() {
+    if (!isSignedIn || savingProfile) return;
+
+    setSavingProfile(true);
+    setProfileMessage("");
+
+    try {
+      const response = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: profileNameInput }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error ?? "Could not update your name.");
+      }
+
+      setProfileName(data.user.name);
+      setProfileNameInput(data.user.name);
+      setProfileMessage("Name updated.");
+    } catch (error) {
+      setProfileMessage(
+        error instanceof Error ? error.message : "Could not update your name."
+      );
+    } finally {
+      setSavingProfile(false);
+    }
+  }
+
   const navItems: { id: Tab; label: string; icon: string }[] = [
     { id: "dashboard", label: "Overview", icon: "◫" },
     { id: "achievements", label: "Achievements", icon: "✦" },
     { id: "posts", label: "Post studio", icon: "↗" },
     { id: "settings", label: "Settings", icon: "⚙" },
   ];
+
+    if (!isSignedIn && !hasChosenGuest) {
+    return (
+      <main className={`career-app ${theme} welcome-page`}>
+        <section className="welcome-card">
+          <button className="career-logo welcome-logo" type="button">
+            <span>✦</span>
+            Progressly
+          </button>
+
+          <div className="welcome-content">
+            <p className="section-label">WELCOME</p>
+            <h1>Keep track of work that matters.</h1>
+            <p>
+              Track meaningful progress and turn it into a story you can share.
+            </p>
+
+            <div className="welcome-actions">
+              <button
+                className="primary-button"
+                onClick={() => void startGoogleSignIn()}
+              >
+                Continue with Google
+              </button>
+
+              <button
+                className="secondary-button"
+                onClick={() => setShowGuestModal(true)}
+              >
+                Continue as guest
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {showGuestModal && (
+          <div
+            className="modal-backdrop"
+            onClick={() => setShowGuestModal(false)}
+          >
+            <section
+              className="sign-in-modal"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <button
+                className="close-button"
+                type="button"
+                onClick={() => setShowGuestModal(false)}
+                aria-label="Close"
+              >
+                ×
+              </button>
+
+              <p className="section-label">GUEST MODE</p>
+              <h2>Continue as guest?</h2>
+              <p>
+                Your achievements will only stay on this device. Sign in with
+                Google to save them securely to your account.
+              </p>
+
+              <div className="sign-in-modal-actions">
+                <button
+                  className="secondary-button"
+                  onClick={() => void startGoogleSignIn()}
+                >
+                  Sign in with Google
+                </button>
+
+                <button className="primary-button" onClick={continueAsGuest}>
+                  Continue as guest
+                </button>
+              </div>
+            </section>
+          </div>
+        )}
+      </main>
+    );
+  }
 
   return (
     <main className={`career-app ${theme}`}>
@@ -616,6 +762,10 @@ function closePreview() {
             </div>
           ) : null}
 
+          {isSignedIn && (
+  <span className="topbar-user-name">{userName}</span>
+)}
+
           {isSignedIn ? (
             <button className="sign-out-button" onClick={() => signOut()}>
               Sign out
@@ -631,79 +781,26 @@ function closePreview() {
 <section className="career-content" key={activeTab}>
           {activeTab === "dashboard" && (
           <>
-          <div className="page-heading dashboard-hero">
-            <div className="hero-copy">
-              <p className="section-label">Your record</p>
+ <div className="page-heading dashboard-hero">
+  <div className="hero-copy">
+    <p className="section-label">OVERVIEW</p>
 
-              <h1>
-                Every win,
-                <span> logged.</span>
-              </h1>
+    <h1>
+      Your progress,
+      <span> in one place.</span>
+    </h1>
 
-              <div className="hero-chips">
-                <span>✦ Private</span>
-                <span>↗ Share-ready</span>
-              </div>
-            </div>
-
-            <div className="hero-side">
-              <div className="hero-seal">
-                <svg viewBox="0 0 200 200" aria-hidden="true">
-                  <circle className="seal-track" cx="100" cy="100" r="86" />
-                  <circle className="seal-ring" cx="100" cy="100" r="70" />
-                  <path
-                    id="sealTextPath"
-                    d="M100,100 m-82,0 a82,82 0 1,1 164,0 a82,82 0 1,1 -164,0"
-                    fill="none"
-                  />
-                  <text className="seal-text">
-                    <textPath href="#sealTextPath" startOffset="0%">
-                      PROGRESSLY · VERIFIED CAREER RECORD · PROGRESSLY · VERIFIED CAREER RECORD ·
-                    </textPath>
-                  </text>
-                </svg>
-
-                <div className="seal-center">
-                  <strong>{achievements.length}</strong>
-                  <small>entries logged</small>
-                </div>
-              </div>
-
-              <button
-                className="primary-button hero-add-button"
-                onClick={openNewAchievement}
-              >
-                <span>+</span> Add achievement
-              </button>
-            </div>
-          </div>
-
-
-  <div className="hero-side">
-    <div className="weekly-orbit">
-      <svg viewBox="0 0 180 180" aria-hidden="true">
-        <circle className="orbit-track" cx="90" cy="90" r="70" />
-        <circle
-          className="orbit-progress"
-          cx="90"
-          cy="90"
-          r="70"
-          pathLength="100"
-          strokeDasharray="72 100"
-        />
-      </svg>
-
-      <div className="orbit-copy">
-        <small>This week</small>
-        <strong>{stats.week}</strong>
-        <span>wins captured</span>
-      </div>
-    </div>
-
-    <button className="primary-button hero-add-button" onClick={openNewAchievement}>
-      <span>+</span> Add achievement
-    </button>
+    <p className="hero-description">
+      {achievements.length} achievements in your personal record.
+    </p>
   </div>
+
+  <div className="hero-summary">
+    <span>This week</span>
+    <strong>{stats.week}</strong>
+    <small>achievements recorded</small>
+  </div>
+</div>
 
             <div className="stat-grid">
               <article className="stat-card accent-purple">
@@ -1070,6 +1167,43 @@ function closePreview() {
           <section className="dashboard-panel settings-panel">
             <p className="section-label">SETTINGS</p>
             <h1>Your account settings</h1>
+
+            {isSignedIn && (
+  <div className="profile-settings-card">
+    <div>
+      <b>Profile</b>
+      <p>Choose the name shown in your account.</p>
+    </div>
+
+    <label>
+      Display name
+      <input
+        value={profileNameInput}
+        onChange={(event) => setProfileNameInput(event.target.value)}
+        placeholder="Your name"
+      />
+    </label>
+
+    <label>
+      Email
+      <input value={profileEmail} readOnly />
+    </label>
+
+    <div className="settings-actions">
+      <button
+        className="primary-button settings-email-button"
+        disabled={savingProfile}
+        onClick={() => void saveProfileName()}
+      >
+        {savingProfile ? "Saving..." : "Save name"}
+      </button>
+
+      {profileMessage && (
+        <p className="test-email-message">{profileMessage}</p>
+      )}
+    </div>
+  </div>
+)}
 
             <div className="setting-line">
               <div>

@@ -1,4 +1,3 @@
-import { eq } from "drizzle-orm";
 import NextAuth, { getServerSession, type NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
@@ -14,6 +13,7 @@ export const authOptions: NextAuthOptions = {
   ],
   secret: process.env.AUTH_SECRET,
   session: { strategy: "jwt" },
+
   callbacks: {
     async signIn({ user }) {
       if (!user.email) return false;
@@ -31,26 +31,42 @@ export const authOptions: NextAuthOptions = {
         .onConflictDoUpdate({
           target: users.email,
           set: {
-            name: user.name?.trim() || user.email,
             imageUrl: user.image ?? null,
             updatedAt: new Date(),
           },
         })
-        .returning({ id: users.id });
+        .returning({
+          id: users.id,
+          name: users.name,
+        });
 
       if (!dbUser) return false;
 
       user.id = dbUser.id;
+      user.name = dbUser.name;
       return true;
     },
+
     async jwt({ token, user }) {
-      if (user) token.userId = user.id;
+      if (user) {
+        token.userId = user.id;
+        token.name = user.name;
+      }
+
       return token;
     },
+
     async session({ session, token }) {
-      if (session.user && typeof token.userId === "string") {
-        session.user.id = token.userId;
+      if (session.user) {
+        if (typeof token.userId === "string") {
+          session.user.id = token.userId;
+        }
+
+        if (typeof token.name === "string") {
+          session.user.name = token.name;
+        }
       }
+
       return session;
     },
   },
